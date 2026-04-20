@@ -32,7 +32,7 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # 🚀 APPS
 INSTALLED_APPS = [
-    'core',
+    'focusflow.core',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
