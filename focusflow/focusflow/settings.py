@@ -27,6 +27,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['focusflow-3-fy3k.onrender.com']
 
+CSRF_TRUSTED_ORIGINS = [
+
+    "https://focusflow-3-fy3k.onrender.com"
+
+]
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -122,9 +128,6 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-LOGIN_URL = '/login/'
-LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/login/'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'login'
