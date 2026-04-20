@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FocusFlow – Smart Study Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -173,6 +177,155 @@
   /* CONFETTI */
   .confetti-piece { position: fixed; width: 8px; height: 8px; border-radius: 2px; pointer-events: none; z-index: 9999; animation: confettiFall linear forwards; }
   @keyframes confettiFall { 0%{transform:translateY(-10px) rotate(0deg);opacity:1} 100%{transform:translateY(100vh) rotate(720deg);opacity:0} }
+
+  /* ──────────────────────────────────────────
+     CHART SECTION STYLES
+     Add these to your main CSS file or <style>
+  ────────────────────────────────────────── */
+ 
+  /* ── NAVBAR ── */
+  .ff-navbar {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2rem;
+    height: 64px;
+    background: rgba(8,8,17,0.85);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  .ff-nav-brand {
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'Syne', sans-serif;
+    font-size: 1.15rem; font-weight: 700; letter-spacing: -0.02em;
+    background: linear-gradient(135deg,#fff,#a78bfa);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    text-decoration: none;
+  }
+  .ff-nav-brand span { font-size: 1.3rem; }
+  .ff-nav-right { display: flex; align-items: center; gap: 1rem; }
+  .ff-nav-user {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 100px; padding: 6px 14px 6px 8px;
+    font-size: 13px; color: #9898b8;
+  }
+  .ff-nav-avatar {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: linear-gradient(135deg, #6c63ff, #a78bfa);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: #fff;
+  }
+  .ff-nav-username { color: #eeeeff; font-weight: 500; }
+ 
+  .ff-btn-reset {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(248,113,113,0.08);
+    border: 1px solid rgba(248,113,113,0.2);
+    border-radius: 100px; padding: 7px 16px;
+    color: #f87171; font-size: 13px; font-weight: 500;
+    cursor: pointer; transition: background 0.2s, transform 0.2s;
+    font-family: inherit;
+  }
+  .ff-btn-reset:hover { background: rgba(248,113,113,0.16); transform: translateY(-1px); }
+ 
+  .ff-btn-logout {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(108,99,255,0.1);
+    border: 1px solid rgba(108,99,255,0.25);
+    border-radius: 100px; padding: 7px 16px;
+    color: #a78bfa; font-size: 13px; font-weight: 500;
+    cursor: pointer; transition: background 0.2s, transform 0.2s;
+    font-family: inherit; text-decoration: none;
+  }
+  .ff-btn-logout:hover { background: rgba(108,99,255,0.2); transform: translateY(-1px); }
+ 
+  /* ── CHARTS GRID ── */
+  .charts-section { padding: 3rem 2rem; max-width: 1100px; margin: 0 auto; }
+ 
+  .section-header {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 1.75rem;
+  }
+  .section-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.15em;
+    text-transform: uppercase; color: #a78bfa;
+  }
+  .section-line { flex: 1; height: 1px; background: linear-gradient(to right, rgba(255,255,255,0.07), transparent); }
+ 
+  .charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 1.5rem;
+  }
+  @media(max-width: 768px) { .charts-grid { grid-template-columns: 1fr; } }
+ 
+  .chart-card {
+    background: rgba(255,255,255,0.035);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 20px;
+    padding: 1.75rem;
+    backdrop-filter: blur(20px);
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), border-color 0.3s, box-shadow 0.3s;
+    position: relative; overflow: hidden;
+  }
+  .chart-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(108,99,255,0.4), transparent);
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .chart-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(108,99,255,0.2);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 30px rgba(108,99,255,0.06);
+  }
+  .chart-card:hover::before { opacity: 1; }
+ 
+  .chart-card.wide { grid-column: 1 / -1; }
+ 
+  .chart-card-head {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+  .chart-card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem; font-weight: 600; color: #eeeeff;
+    margin-bottom: 3px;
+  }
+  .chart-card-sub { font-size: 12px; color: #5a5a7a; }
+  .chart-badge {
+    font-size: 11px; font-weight: 600; padding: 4px 10px;
+    border-radius: 100px; white-space: nowrap;
+  }
+  .chart-badge.up   { background: rgba(52,211,153,0.12); border: 1px solid rgba(52,211,153,0.25); color: #34d399; }
+  .chart-badge.down { background: rgba(248,113,113,0.1);  border: 1px solid rgba(248,113,113,0.2);  color: #f87171; }
+  .chart-badge.info { background: rgba(56,189,248,0.1);   border: 1px solid rgba(56,189,248,0.2);   color: #38bdf8; }
+ 
+  .chart-canvas-wrap { position: relative; }
+ 
+  /* ── SUMMARY ROW ── */
+  .chart-summary {
+    display: flex; gap: 1.5rem; flex-wrap: wrap;
+    margin-top: 1.25rem; padding-top: 1.25rem;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+  .chart-summary-item { display: flex; flex-direction: column; gap: 3px; }
+  .chart-summary-val { font-size: 1.3rem; font-weight: 700; letter-spacing: -0.03em; }
+  .chart-summary-val.purple { color: #a78bfa; }
+  .chart-summary-val.blue   { color: #38bdf8; }
+  .chart-summary-val.green  { color: #34d399; }
+  .chart-summary-label { font-size: 11.5px; color: #5a5a7a; }
+ 
+  /* Pie legend */
+  .pie-legend {
+    display: flex; flex-direction: column; gap: 8px; justify-content: center;
+    padding-left: 1rem; min-width: 120px;
+  }
+  .pie-legend-item { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: #9898b8; }
+  .pie-legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .pie-wrap { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+
 </style>
 </head>
 <body>
@@ -185,7 +338,14 @@
       <div class="badge-dot"></div>
       Now in Beta — Free to use
     </div>
-    <h1 class="hero-title">FocusFlow 🚀</h1>
+    <h1 class="hero-title">
+        FocusFlow 🚀 <br>
+        {% if user.is_authenticated %}
+            <span style="font-size:0.5em; display:block; margin-top:10px;">
+            Welcome, {{ user.username }}!
+            </span>
+        {% endif %}
+        </h1>
     <p class="hero-tagline">Track your focus. Master your time.</p>
     <a href="#app" class="hero-cta">
       Start a session
@@ -369,6 +529,112 @@
   <span id="toast-icon">🎉</span>
   <span class="toast-msg" id="toast-msg"></span>
 </div>
+
+
+{# ── NAVBAR ── #}
+<nav class="ff-navbar">
+  <a href="{% url 'home' %}" class="ff-nav-brand">
+    <span>🚀</span> FocusFlow
+  </a>
+  <div class="ff-nav-right">
+    {% if user.is_authenticated %}
+      <div class="ff-nav-user">
+        <div class="ff-nav-avatar">{{ user.username|first|upper }}</div>
+        <span class="ff-nav-username">{{ user.username }}</span>
+      </div>
+ 
+      {# Reset Sessions Button #}
+      <form method="POST" action="{% url 'reset_sessions' %}" style="display:inline" onsubmit="return confirm('Reset all sessions? This cannot be undone.')">
+        {% csrf_token %}
+        <button type="submit" class="ff-btn-reset">
+          <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          Reset
+        </button>
+      </form>
+ 
+      {# Logout #}
+      <form method="POST" action="{% url 'logout' %}" style="display:inline">
+        {% csrf_token %}
+        <button type="submit" class="ff-btn-logout">
+          <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+          Logout
+        </button>
+      </form>
+    {% endif %}
+  </div>
+</nav>
+ 
+{# ── CHARTS SECTION ── #}
+<section class="charts-section">
+ 
+  <div class="section-header">
+    <span class="section-label">Analytics</span>
+    <div class="section-line"></div>
+  </div>
+ 
+  <div class="charts-grid">
+ 
+    {# ── LINE CHART: Study time over 7 days ── #}
+    <div class="chart-card wide">
+      <div class="chart-card-head">
+        <div>
+          <div class="chart-card-title">📈 Study Time — Last 7 Days</div>
+          <div class="chart-card-sub">Total minutes per day</div>
+        </div>
+        <span class="chart-badge up">↑ 18% this week</span>
+      </div>
+      <div class="chart-canvas-wrap" style="height:220px">
+        <canvas id="lineChart"></canvas>
+      </div>
+      <div class="chart-summary">
+        <div class="chart-summary-item">
+          <span class="chart-summary-val purple" id="line-total">0m</span>
+          <span class="chart-summary-label">Total this week</span>
+        </div>
+        <div class="chart-summary-item">
+          <span class="chart-summary-val blue" id="line-avg">0m</span>
+          <span class="chart-summary-label">Daily average</span>
+        </div>
+        <div class="chart-summary-item">
+          <span class="chart-summary-val green" id="line-peak">0m</span>
+          <span class="chart-summary-label">Peak day</span>
+        </div>
+      </div>
+    </div>
+ 
+    {# ── BAR CHART: Sessions per day ── #}
+    <div class="chart-card">
+      <div class="chart-card-head">
+        <div>
+          <div class="chart-card-title">📊 Sessions Per Day</div>
+          <div class="chart-card-sub">Number of study sessions</div>
+        </div>
+        <span class="chart-badge info">7-day view</span>
+      </div>
+      <div class="chart-canvas-wrap" style="height:200px">
+        <canvas id="barChart"></canvas>
+      </div>
+    </div>
+ 
+    {# ── PIE CHART: Subject distribution ── #}
+    <div class="chart-card">
+      <div class="chart-card-head">
+        <div>
+          <div class="chart-card-title">🍕 Subject Distribution</div>
+          <div class="chart-card-sub">Minutes per subject</div>
+        </div>
+        <span class="chart-badge up">All time</span>
+      </div>
+      <div class="pie-wrap">
+        <div class="chart-canvas-wrap" style="height:200px;flex:0 0 200px">
+          <canvas id="pieChart"></canvas>
+        </div>
+        <div class="pie-legend" id="pie-legend"></div>
+      </div>
+    </div>
+ 
+  </div>
+</section>
 
 <script>
   // Particles
@@ -590,6 +856,232 @@ async function completeSession(){
     }
     return cookieValue;
 }
+
+(function() {
+  // ── THEME DEFAULTS ──────────────────────────────────────────
+  Chart.defaults.color = '#8888aa';
+  Chart.defaults.font.family = "'DM Sans', sans-serif";
+  Chart.defaults.font.size = 12;
+ 
+  // ── HELPERS ─────────────────────────────────────────────────
+  function getLast7Days() {
+    const days = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      days.push(d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }));
+    }
+    return days;
+  }
+ 
+  function getLast7Short() {
+    const days = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      days.push(d.toLocaleDateString('en-US', { weekday: 'short' }));
+    }
+    return days;
+  }
+ 
+  // ── DATA ─────────────────────────────────────────────────────
+  // TODO: Replace dummy data with Django template variables:
+  //   const studyMinutes = {{ study_minutes_json|safe }};
+  //   const sessionsPerDay = {{ sessions_per_day_json|safe }};
+  //   const subjectData = {{ subject_data_json|safe }};
+ 
+// Django data (REAL DATA)
+const studyMinutes = JSON.parse('{{ study_minutes_json|default:"[]"|escapejs }}');
+const sessionsPerDay = JSON.parse('{{ sessions_per_day_json|default:"[]"|escapejs }}');
+
+// Static for now
+const subjectLabels  = ['Mathematics', 'Physics', 'CS', 'History', 'English'];
+const subjectMinutes = [180, 120, 240, 60, 90];
+
+const labels7 = getLast7Short();
+
+ 
+  // Summary
+  const total = studyMinutes.reduce((a, b) => a + b, 0);
+  const avg   = Math.round(total / 7);
+  const peak  = Math.max(...studyMinutes);
+  document.getElementById('line-total').textContent = total >= 60 ? (total/60).toFixed(1)+'h' : total+'m';
+  document.getElementById('line-avg').textContent   = avg+'m';
+  document.getElementById('line-peak').textContent  = peak+'m';
+ 
+  // ── GRADIENT FACTORY ────────────────────────────────────────
+  function makeGrad(ctx, top, bottom) {
+    const g = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
+    g.addColorStop(0, top);
+    g.addColorStop(1, bottom);
+    return g;
+  }
+ 
+  // ── LINE CHART ───────────────────────────────────────────────
+  const lineCtx = document.getElementById('lineChart').getContext('2d');
+  const lineGrad = makeGrad(lineCtx, 'rgba(108,99,255,0.35)', 'rgba(108,99,255,0)');
+ 
+  new Chart(lineCtx, {
+    type: 'line',
+    data: {
+      labels: labels7,
+      datasets: [{
+        label: 'Minutes studied',
+        data: studyMinutes,
+        borderColor: '#6c63ff',
+        backgroundColor: lineGrad,
+        borderWidth: 2.5,
+        pointBackgroundColor: '#6c63ff',
+        pointBorderColor: '#0a0a0f',
+        pointBorderWidth: 2,
+        pointRadius: 5,
+        pointHoverRadius: 7,
+        pointHoverBackgroundColor: '#a78bfa',
+        fill: true,
+        tension: 0.4,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      animation: { duration: 1000, easing: 'easeInOutQuart' },
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(14,14,26,0.95)',
+          borderColor: 'rgba(108,99,255,0.35)',
+          borderWidth: 1,
+          titleColor: '#eeeeff',
+          bodyColor: '#a78bfa',
+          padding: 12,
+          callbacks: {
+            label: ctx => ` ${ctx.parsed.y} minutes`
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          border: { display: false },
+          ticks: { color: '#5a5a7a' }
+        },
+        y: {
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          border: { display: false },
+          ticks: { color: '#5a5a7a', callback: v => v + 'm' },
+          beginAtZero: true
+        }
+      }
+    }
+  });
+ 
+  // ── BAR CHART ────────────────────────────────────────────────
+  const barCtx = document.getElementById('barChart').getContext('2d');
+  const barColors = sessionsPerDay.map((_, i) =>
+    `hsla(${210 + i * 12}, 80%, 65%, 0.8)`
+  );
+ 
+  new Chart(barCtx, {
+    type: 'bar',
+    data: {
+      labels: labels7,
+      datasets: [{
+        label: 'Sessions',
+        data: sessionsPerDay,
+        backgroundColor: barColors,
+        borderColor: barColors.map(c => c.replace('0.8', '1')),
+        borderWidth: 1,
+        borderRadius: 8,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      animation: {
+        duration: 900,
+        delay: ctx => ctx.dataIndex * 80,
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(14,14,26,0.95)',
+          borderColor: 'rgba(56,189,248,0.35)',
+          borderWidth: 1,
+          titleColor: '#eeeeff',
+          bodyColor: '#38bdf8',
+          padding: 12,
+          callbacks: {
+            label: ctx => ` ${ctx.parsed.y} session${ctx.parsed.y !== 1 ? 's' : ''}`
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          border: { display: false },
+          ticks: { color: '#5a5a7a' }
+        },
+        y: {
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          border: { display: false },
+          ticks: { color: '#5a5a7a', stepSize: 1 },
+          beginAtZero: true
+        }
+      }
+    }
+  });
+ 
+  // ── PIE CHART ────────────────────────────────────────────────
+  const pieColors = [
+    '#6c63ff', '#38bdf8', '#34d399', '#f59e0b', '#f472b6'
+  ];
+  const pieCtx = document.getElementById('pieChart').getContext('2d');
+ 
+  new Chart(pieCtx, {
+    type: 'doughnut',
+    data: {
+      labels: subjectLabels,
+      datasets: [{
+        data: subjectMinutes,
+        backgroundColor: pieColors.map(c => c + 'cc'),
+        borderColor: pieColors,
+        borderWidth: 2,
+        hoverOffset: 10,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      cutout: '62%',
+      animation: { duration: 1000, animateRotate: true, animateScale: true },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(14,14,26,0.95)',
+          borderColor: 'rgba(255,255,255,0.1)',
+          borderWidth: 1,
+          titleColor: '#eeeeff',
+          bodyColor: '#9898b8',
+          padding: 12,
+          callbacks: {
+            label: ctx => ` ${ctx.parsed}min  (${Math.round(ctx.parsed / subjectMinutes.reduce((a,b)=>a+b,0)*100)}%)`
+          }
+        }
+      }
+    }
+  });
+ 
+  // Build pie legend
+  const legendEl = document.getElementById('pie-legend');
+  subjectLabels.forEach((label, i) => {
+    const item = document.createElement('div');
+    item.className = 'pie-legend-item';
+    item.innerHTML = `<div class="pie-legend-dot" style="background:${pieColors[i]}"></div>${label}`;
+    legendEl.appendChild(item);
+  });
+ 
+})();
+
+
 </script>
 </body>
 </html>
