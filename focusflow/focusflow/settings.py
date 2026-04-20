@@ -2,44 +2,31 @@
 Django settings for focusflow project.
 """
 
-DEBUG = False
-
-ALLOWED_HOSTS = [
-    'focusflow-7.onrender.com',
-    'localhost',
-    '127.0.0.1'
-]
-
 from pathlib import Path
+import os
 
+# 📁 BASE
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # 🔐 SECURITY
 SECRET_KEY = 'django-insecure-ywj954!q!#@s7&i)hpq7qn0h*$1(14rdhk%ae82@uu83t-1%g1'
 
-# 👉 CHANGE THIS
-DEBUG = False
+# ⚠️ TEMP DEBUG (turn OFF later)
+DEBUG = True
+
+# 🌐 ALLOWED HOSTS (temporary for debugging)
+ALLOWED_HOSTS = ['*']
 
 
-# ✅ HOSTS
-ALLOWED_HOSTS = [
-    'focusflow-3-fy3k.onrender.com',
-    '127.0.0.1',
-    'localhost'
-]
-
-
-# 🔐 CSRF (IMPORTANT FOR RENDER)
+# 🔐 CSRF (Render)
 CSRF_TRUSTED_ORIGINS = [
-    "https://focusflow-3-fy3k.onrender.com"
+    "https://*.onrender.com"
 ]
 
 
-# 🍪 SESSION + SECURITY
+# 🍪 SECURITY
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
-
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
@@ -67,6 +54,7 @@ MIDDLEWARE = [
 ]
 
 
+# 🔗 URLS
 ROOT_URLCONF = 'focusflow.urls'
 
 
@@ -88,6 +76,7 @@ TEMPLATES = [
 ]
 
 
+# 🔥 WSGI
 WSGI_APPLICATION = 'focusflow.wsgi.application'
 
 
@@ -100,32 +89,25 @@ DATABASES = {
 }
 
 
-# 🔑 PASSWORD VALIDATION
+# 🔑 PASSWORDS
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
 
-# 🌍 INTERNATIONALIZATION
+# 🌍 INTERNATIONAL
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
 
-# 📁 STATIC FILES
+# 📁 STATIC FILES (IMPORTANT FOR RENDER)
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 
 # 🔢 DEFAULT PK
@@ -136,4 +118,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/login/'
-
