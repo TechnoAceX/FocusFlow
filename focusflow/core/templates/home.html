@@ -894,9 +894,7 @@ async function completeSession(){
 const studyMinutes = JSON.parse('{{ study_minutes_json|default:"[]"|escapejs }}');
 const sessionsPerDay = JSON.parse('{{ sessions_per_day_json|default:"[]"|escapejs }}');
 
-// Static for now
-const subjectLabels  = ['Mathematics', 'Physics', 'CS', 'History', 'English'];
-const subjectMinutes = [180, 120, 240, 60, 90];
+
 
 const labels7 = getLast7Short();
 
@@ -1036,40 +1034,57 @@ const labels7 = getLast7Short();
     '#6c63ff', '#38bdf8', '#34d399', '#f59e0b', '#f472b6'
   ];
   const pieCtx = document.getElementById('pieChart').getContext('2d');
- 
-  new Chart(pieCtx, {
-    type: 'doughnut',
-    data: {
-      labels: subjectLabels,
-      datasets: [{
-        data: subjectMinutes,
-        backgroundColor: pieColors.map(c => c + 'cc'),
-        borderColor: pieColors,
-        borderWidth: 2,
-        hoverOffset: 10,
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      cutout: '62%',
-      animation: { duration: 1000, animateRotate: true, animateScale: true },
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          backgroundColor: 'rgba(14,14,26,0.95)',
-          borderColor: 'rgba(255,255,255,0.1)',
-          borderWidth: 1,
-          titleColor: '#eeeeff',
-          bodyColor: '#9898b8',
-          padding: 12,
-          callbacks: {
-            label: ctx => ` ${ctx.parsed}min  (${Math.round(ctx.parsed / subjectMinutes.reduce((a,b)=>a+b,0)*100)}%)`
-          }
+
+let pieChart; // IMPORTANT
+
+fetch('/subject-data/')
+  .then(res => res.json())
+  .then(data => {
+    const labels = data.map(d => d.subject);
+    const values = data.map(d => d.total_hours * 60); // convert hours → minutes
+
+    const pieColors = [
+      '#6c63ff', '#38bdf8', '#34d399', '#f59e0b', '#f472b6'
+    ];
+
+    pieChart = new Chart(pieCtx, {
+      type: 'doughnut',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: values,
+          backgroundColor: pieColors.slice(0, labels.length).map(c => c + 'cc'),
+          borderColor: pieColors.slice(0, labels.length),
+          borderWidth: 2,
+          hoverOffset: 10,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '62%',
+        plugins: {
+          legend: { display: false }
         }
       }
-    }
+    });
+
+    // 🔥 Dynamic legend
+    const legendEl = document.getElementById('pie-legend');
+    legendEl.innerHTML = "";
+
+    labels.forEach((label, i) => {
+      const item = document.createElement('div');
+      item.className = 'pie-legend-item';
+      item.innerHTML = `
+        <div class="pie-legend-dot" style="background:${pieColors[i]}"></div>
+        ${label}
+      `;
+      legendEl.appendChild(item);
+    });
+
   });
- 
+
   // Build pie legend
   const legendEl = document.getElementById('pie-legend');
   subjectLabels.forEach((label, i) => {
