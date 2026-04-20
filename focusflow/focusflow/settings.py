@@ -32,7 +32,9 @@ CSRF_TRUSTED_ORIGINS = [
     "https://focusflow-3-fy3k.onrender.com"
 
 ]
+SESSION_COOKIE_SECURE = True
 
+CSRF_COOKIE_SECURE = True
 # Application definition
 
 INSTALLED_APPS = [
