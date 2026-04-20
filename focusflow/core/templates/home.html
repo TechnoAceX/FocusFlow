@@ -543,14 +543,7 @@
         <span class="ff-nav-username">{{ user.username }}</span>
       </div>
  
-      {# Reset Sessions Button #}
-      <form method="POST" action="{% url 'reset_sessions' %}" style="display:inline" onsubmit="return confirm('Reset all sessions? This cannot be undone.')">
-        {% csrf_token %}
-        <button type="submit" class="ff-btn-reset">
-          <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-          Reset
-        </button>
-      </form>
+     
  
       {# Logout #}
       <form method="POST" action="{% url 'logout' %}" style="display:inline">
