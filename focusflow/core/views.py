@@ -6,7 +6,10 @@ from django.contrib import messages
 import json
 
 from .models import StudySession
-
+from django.db.models import Sum
+from django.http import JsonResponse
+from .models import StudySession
+from django.contrib.auth.decorators import login_required
 
 
 
@@ -101,10 +104,8 @@ def home(request):
     return render(request, "home.html", context)
 
 
-from django.db.models import Sum
-from django.http import JsonResponse
-from .models import StudySession
 
+@login_required
 def subject_data(request):
     data = (
         StudySession.objects
