@@ -29,6 +29,7 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
+DEBUG = True
 
 # 🚀 APPS
 INSTALLED_APPS = [
@@ -55,7 +56,7 @@ MIDDLEWARE = [
 
 
 # 🔗 URLS
-ROOT_URLCONF = 'focusflow.urls'
+ROOT_URLCONF = 'focusflow.focusflow.urls'
 
 
 # 🎨 TEMPLATES
@@ -77,8 +78,7 @@ TEMPLATES = [
 
 
 # 🔥 WSGI
-WSGI_APPLICATION = 'focusflow.wsgi.application'
-
+WSGI_APPLICATION = 'focusflow.focusflow.wsgi.application'
 
 # 🗄️ DATABASE
 DATABASES = {
