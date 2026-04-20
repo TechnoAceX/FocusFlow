@@ -1,14 +1,15 @@
-from django.urls import path
-from . import views
-from django.contrib.auth import views as auth_views   # ✅ ADD THIS
+from django.db.models import Sum
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from .models import StudySession
 
-urlpatterns = [
-    path('', views.home, name='home'),
-    path('add-session/', views.add_session, name='add_session'),
-    path('reset-sessions/', views.reset_sessions, name='reset_sessions'),
-    path('signup/', views.signup, name='signup'),
-    path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('subject-data/', views.subject_data, name='subject_data'),
-]
-
+@login_required
+def subject_data(request):
+    data = (
+        StudySession.objects
+        .filter(user=request.user)
+        .values('subject')
+        .annotate(total_hours=Sum('hours'))
+    )
+    
+    return JsonResponse(list(data), safe=False)
