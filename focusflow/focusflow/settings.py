@@ -56,7 +56,8 @@ MIDDLEWARE = [
 
 
 # 🔗 URLS
-ROOT_URLCONF = 'focusflow.focusflow.urls'
+ROOT_URLCONF = 'focusflow.urls'
+WSGI_APPLICATION = 'focusflow.wsgi.application'
 
 
 # 🎨 TEMPLATES
@@ -77,8 +78,6 @@ TEMPLATES = [
 ]
 
 
-# 🔥 WSGI
-WSGI_APPLICATION = 'focusflow.focusflow.wsgi.application'
 
 # 🗄️ DATABASE
 DATABASES = {
