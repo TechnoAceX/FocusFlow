@@ -99,3 +99,18 @@ def home(request):
     }
 
     return render(request, "home.html", context)
+
+
+from django.db.models import Sum
+from django.http import JsonResponse
+from .models import StudySession
+
+def subject_data(request):
+    data = (
+        StudySession.objects
+        .filter(user=request.user)
+        .values('subject')
+        .annotate(total_hours=Sum('hours'))
+    )
+    
+    return JsonResponse(list(data), safe=False)

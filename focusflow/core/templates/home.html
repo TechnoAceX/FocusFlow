@@ -1081,6 +1081,18 @@ const labels7 = getLast7Short();
  
 })();
 
+fetch('/subject-data/')
+  .then(res => res.json())
+  .then(data => {
+      const labels = data.map(d => d.subject)
+      const values = data.map(d => d.total_hours)
+
+      // update chart
+      chart.data.labels = labels
+      chart.data.datasets[0].data = values
+      chart.update()
+  })
+
 
 </script>
 </body>
