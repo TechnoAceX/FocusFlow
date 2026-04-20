@@ -10,26 +10,29 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # 🔐 SECURITY
 SECRET_KEY = 'django-insecure-ywj954!q!#@s7&i)hpq7qn0h*$1(14rdhk%ae82@uu83t-1%g1'
 
-DEBUG = True
+# 👉 CHANGE THIS
+DEBUG = False
 
 
-# ✅ HOSTS (LOCAL + RENDER SAFE)
+# ✅ HOSTS
 ALLOWED_HOSTS = [
+    'focusflow-3-fy3k.onrender.com',
     '127.0.0.1',
-    'localhost',
-    'focusflow-3-fy3k.onrender.com'
+    'localhost'
 ]
 
 
-# ⚠️ CSRF (ONLY needed for deployment, safe to keep)
+# 🔐 CSRF (IMPORTANT FOR RENDER)
 CSRF_TRUSTED_ORIGINS = [
     "https://focusflow-3-fy3k.onrender.com"
 ]
 
 
-# 🍪 IMPORTANT: LOCAL MUST BE FALSE
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
+# 🍪 SESSION + SECURITY
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
 # 🚀 APPS
@@ -63,12 +66,12 @@ ROOT_URLCONF = 'focusflow.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],  # you can add custom dirs later
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
-                'django.template.context_processors.request',  # IMPORTANT
+                'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -121,7 +124,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# 🔐 AUTH FLOW (THIS FIXES YOUR LOGIN LOOP)
+# 🔐 AUTH FLOW
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/login/'
